@@ -1,0 +1,44 @@
+USE [SQL_CITY_2]
+GO
+
+/****** Object:  Trigger [dbo].[ANS]    Script Date: 11/28/2022 3:28:27 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE TRIGGER [dbo].[ANS] 
+   ON [dbo].[WhoIsMurderer]
+   AFTER INSERT
+AS 
+BEGIN 
+	DECLARE @Partial Varchar(MAX) = 'Congrats, you found the murderer! But wait, there are more... ' + CHAR(13) +'If you think you are up for a challenge, try querying the interview transcript of the murderer to find the real villain behind this crime.' + CHAR(13) +'If you feel especially confident in your SQL skills, try to complete this final step with no more than 2 queries.' + CHAR(13) +'Use this same INSERT statement with your new suspect to check your answer.'
+	DECLARE @Wrong Varchar(MAX) = 'Oops! You got the wrong person.' + CHAR(13) +'Please check the database with proper conditions again.'
+	DECLARE @Right Varchar(MAX) = 'Congrats, you found the brains behind the murder!' + CHAR(13) +'Everyone in SQL City hails you as the greatest SQL detective of all time.' + CHAR(13) +'Time to break out the champagne!'
+	DECLARE @name nvarchar(MAX);
+
+    SET @name = (SELECT TOP 1 name FROM WhoIsMurderer);
+
+    IF @name = 'Jeremy Bowers'
+	PRINT @Partial
+	
+	ELSE IF @name = 'Miranda Priestly' 
+	PRINT @Right
+
+	ELSE 
+	PRINT @Wrong
+
+	Rollback
+END
+GO
+
+ALTER TABLE [dbo].[WhoIsMurderer] ENABLE TRIGGER [ANS]
+GO
+
+
